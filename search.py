@@ -84,17 +84,20 @@ def search(problem, structure):
     nodes.push((problem.getStartState(), []))
 
     visited = set()
+    processedSucc = set()
     while nodes:
         vertex, directionsSoFar = nodes.pop()
         if (problem.isGoalState(vertex)):
             return directionsSoFar
         else:
-            visited.add(vertex)        
-            nextSucc = problem.getSuccessors(vertex)
-            for coord, direction, cost in nextSucc:
-                if coord not in visited:
-                    newDir = directionsSoFar + [direction]
-                    nodes.push((coord, newDir))
+            if vertex not in visited:
+                nextSucc = problem.getSuccessors(vertex)
+                visited.add(vertex)
+                print "getting successors for", vertex
+                for coord, direction, cost in nextSucc:
+                    if coord not in visited:
+                        newDir = directionsSoFar + [direction]
+                        nodes.push((coord, newDir))
 
 
 def uniformCostSearch(problem):
@@ -104,15 +107,16 @@ def uniformCostSearch(problem):
 
     while queue:
         vertex, directionsSoFar = queue.pop()
-        visited.add(vertex)        
         if (problem.isGoalState(vertex)):
             return directionsSoFar
         else:
-            nextSucc = problem.getSuccessors(vertex)
-            for coord, direction, cost in nextSucc:
-                if coord not in visited:
-                    newDir = directionsSoFar + [direction]
-                    queue.push((coord, newDir), problem.getCostOfActions(newDir))
+            if vertex not in visited:
+                nextSucc = problem.getSuccessors(vertex)
+                visited.add(vertex)        
+                for coord, direction, cost in nextSucc:
+                    if coord not in visited:
+                        newDir = directionsSoFar + [direction]
+                        queue.push((coord, newDir), problem.getCostOfActions(newDir))
 
 
 def nullHeuristic(state, problem=None):
@@ -129,15 +133,16 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while queue:
         vertex, directionsSoFar = queue.pop()
-        visited.add(vertex)        
         if (problem.isGoalState(vertex)):
             return directionsSoFar
         else:
-            nextSucc = problem.getSuccessors(vertex)
-            for coord, direction, cost in nextSucc:
-                if coord not in visited:
-                    newDir = directionsSoFar + [direction]
-                    queue.push((coord, newDir), problem.getCostOfActions(newDir) + heuristic(coord, problem))
+            if vertex not in visited:
+                nextSucc = problem.getSuccessors(vertex)
+                visited.add(vertex)                   
+                for coord, direction, cost in nextSucc:
+                    if coord not in visited:
+                        newDir = directionsSoFar + [direction]
+                        queue.push((coord, newDir), problem.getCostOfActions(newDir) + heuristic(coord, problem))
 
 # Abbreviations
 bfs = breadthFirstSearch
