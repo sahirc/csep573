@@ -1,0 +1,22 @@
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+at vertex (5, 5)
+not found goal
+pushing South
+pushing West
+at vertex ((4, 5), 'West', 1)
+not found goal
+Traceback (most recent call last):
+  File "pacman.py", line 681, in <module>
+    runGames( **args )
+  File "pacman.py", line 647, in runGames
+    game.run()
+  File "/Users/sahircontractor/Desktop/cs573/hw1/search/game.py", line 608, in run
+    agent.registerInitialState(self.state.deepCopy())
+  File "/Users/sahircontractor/Desktop/cs573/hw1/search/searchAgents.py", line 116, in registerInitialState
+    self.actions  = self.searchFunction(problem) # Find a path
+  File "/Users/sahircontractor/Desktop/cs573/hw1/search/search.py", line 92, in depthFirstSearch
+    nextSucc = problem.getSuccessors(vertex) # [0] gives us the x,y from the tuple
+  File "/Users/sahircontractor/Desktop/cs573/hw1/search/searchAgents.py", line 198, in getSuccessors
+    x,y = state
+ValueError: too many values to unpack
