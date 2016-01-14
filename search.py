@@ -74,41 +74,27 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem):
-    stack = util.Stack()
-    visited = set()
-    stack.push((problem.getStartState(), []))
-
-    while not stack.isEmpty():
-        vertex, directionsSoFar = stack.pop()
-        if (problem.isGoalState(vertex)):
-            return directionsSoFar
-        else:
-            visited.add(vertex)
-            nextSucc = problem.getSuccessors(vertex)
-            for coord, direction, cost in nextSucc:
-                if coord not in visited:
-                    newDir = directionsSoFar + [direction]
-                    stack.push((coord, newDir))
-
-
-
+    return search(problem, util.Stack())
 
 def breadthFirstSearch(problem):
-    queue = util.Queue()
-    visited = set()
-    queue.push((problem.getStartState(), []))
+    return search(problem, util.Queue())
 
-    while queue:
-        vertex, directionsSoFar = queue.pop()
-        visited.add(vertex)        
+def search(problem, structure):                    
+    nodes = structure
+    nodes.push((problem.getStartState(), []))
+
+    visited = set()
+    while nodes:
+        vertex, directionsSoFar = nodes.pop()
         if (problem.isGoalState(vertex)):
             return directionsSoFar
         else:
+            visited.add(vertex)        
             nextSucc = problem.getSuccessors(vertex)
             for coord, direction, cost in nextSucc:
                 if coord not in visited:
                     newDir = directionsSoFar + [direction]
-                    queue.push((coord, newDir))
+                    nodes.push((coord, newDir))
 
 
 def uniformCostSearch(problem):
@@ -137,10 +123,21 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    queue = util.PriorityQueue()
+    visited = set()
+    queue.push((problem.getStartState(), []), 0)
 
+    while queue:
+        vertex, directionsSoFar = queue.pop()
+        visited.add(vertex)        
+        if (problem.isGoalState(vertex)):
+            return directionsSoFar
+        else:
+            nextSucc = problem.getSuccessors(vertex)
+            for coord, direction, cost in nextSucc:
+                if coord not in visited:
+                    newDir = directionsSoFar + [direction]
+                    queue.push((coord, newDir), problem.getCostOfActions(newDir) + heuristic(coord, problem))
 
 # Abbreviations
 bfs = breadthFirstSearch
