@@ -288,6 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.startingGameState = startingGameState
 
 
 
@@ -298,7 +299,7 @@ class CornersProblem(search.SearchProblem):
         node = state[0]
         visitedCorners = state[1]
         if node in self.corners:
-            if not node in visitedCorners:
+            if node not in visitedCorners:
                 visitedCorners.append(node)
             return len(visitedCorners) == 4
         return False
@@ -314,12 +315,12 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
-                visitedCorn = list(visitedCorners)
-                next_node = (nextx, nexty)
-                if next_node in self.corners:
-                    if not next_node in visitedCorn:
-                        visitedCorn.append( next_node )
-                successor = ((next_node, visitedCorn), action, 1)
+                _visitedCorners = list(visitedCorners)
+                node = (nextx, nexty)
+                if node in self.corners:
+                    if node not in _visitedCorners:
+                        _visitedCorners.append(node)
+                successor = ((node, _visitedCorners), action, 1)
                 successors.append(successor)
 
         self._expanded += 1
@@ -348,7 +349,8 @@ def cornersHeuristic(state, problem):
     hew = 0
     for corner in corners:
         if corner not in visitedCorners:
-            hew = max(hew, util.manhattanDistance(state[0], corner))
+            prob = PositionSearchProblem(problem.startingGameState, start=(x,y), goal=(corner), warn=False, visualize=False)
+            hew = max(hew, len(search.bfs(prob)))
     return hew
 
 class AStarCornersAgent(SearchAgent):
@@ -419,14 +421,14 @@ def foodHeuristic(state, problem):
       because I'm going to at least travel that far to get the last food dot
     """
     position, foodGrid = state
-    foodToMe = []
+    foodToMe = [0]
     for x, row in enumerate(foodGrid):
         for y, _ in enumerate(row):
             if foodGrid[x][y]:
                 # mazeDistance is a better measure than manhattanDistance
                 foodToMe.append(mazeDistance(position, (x,y), problem.startingGameState))
     
-    return max(foodToMe) if len(foodToMe) > 0 else 0
+    return max(foodToMe)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
