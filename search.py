@@ -1,24 +1,18 @@
 # search.py
 # ---------
-# Licensing Information:  You are free to use or extend these projects for 
-# educational purposes provided that (1) you do not distribute or publish 
-# solutions, (2) you retain this notice, and (3) you provide clear 
-# attribution to UC Berkeley, including a link to 
-# http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero 
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and 
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+# Licensing Information: Please do not distribute or publish solutions to this
+# project. You are free to use and extend these projects for educational
+# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
+# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 """
-In search.py, you will implement generic search algorithms which are called by
-Pacman agents (in searchAgents.py).
+In search.py, you will implement generic search algorithms which are called
+by Pacman agents (in searchAgents.py).
 """
 
 import util
+import string
 
 class SearchProblem:
     """
@@ -30,7 +24,7 @@ class SearchProblem:
 
     def getStartState(self):
         """
-        Returns the start state for the search problem.
+        Returns the start state for the search problem
         """
         util.raiseNotDefined()
 
@@ -38,7 +32,7 @@ class SearchProblem:
         """
           state: Search state
 
-        Returns True if and only if the state is a valid goal state.
+        Returns True if and only if the state is a valid goal state
         """
         util.raiseNotDefined()
 
@@ -46,10 +40,11 @@ class SearchProblem:
         """
           state: Search state
 
-        For a given state, this should return a list of triples, (successor,
-        action, stepCost), where 'successor' is a successor to the current
-        state, 'action' is the action required to get there, and 'stepCost' is
-        the incremental cost of expanding to that successor.
+        For a given state, this should return a list of triples,
+        (successor, action, stepCost), where 'successor' is a
+        successor to the current state, 'action' is the action
+        required to get there, and 'stepCost' is the incremental
+        cost of expanding to that successor
         """
         util.raiseNotDefined()
 
@@ -57,78 +52,60 @@ class SearchProblem:
         """
          actions: A list of actions to take
 
-        This method returns the total cost of a particular sequence of actions.
-        The sequence must be composed of legal moves.
+        This method returns the total cost of a particular sequence of actions.  The sequence must
+        be composed of legal moves
         """
         util.raiseNotDefined()
 
 
 def tinyMazeSearch(problem):
     """
-    Returns a sequence of moves that solves tinyMaze.  For any other maze, the
-    sequence of moves will be incorrect, so only use this for tinyMaze.
+    Returns a sequence of moves that solves tinyMaze.  For any other
+    maze, the sequence of moves will be incorrect, so only use this for tinyMaze
     """
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return  [s,s,w,s,w,w,s,w]
 
 def depthFirstSearch(problem):
-    return search(problem, util.Stack())
+    return graphSearch(problem, util.Stack())
 
 def breadthFirstSearch(problem):
-    return search(problem, util.Queue())
+    return graphSearch(problem, util.Queue())
 
-def search(problem, structure):                    
-    nodes = structure
+def graphSearch(problem, struct):
+    nodes = struct
     nodes.push((problem.getStartState(), []))
 
-    visited = set()
+    visited = []
     processedSucc = set()
     while nodes:
-        vertex, directionsSoFar = nodes.pop()
+        state = nodes.pop()
+        vertex, directionsSoFar = state
         if (problem.isGoalState(vertex)):
             return directionsSoFar
         else:
             if vertex not in visited:
                 nextSucc = problem.getSuccessors(vertex)
-                visited.add(vertex)
-                print "getting successors for", vertex
+                visited.append(vertex)
                 for coord, direction, cost in nextSucc:
                     if coord not in visited:
                         newDir = directionsSoFar + [direction]
-                        nodes.push((coord, newDir))
-
+                        nodes.push((coord, newDir))    
+    
+    
 
 def uniformCostSearch(problem):
-    queue = util.PriorityQueue()
-    visited = set()
-    queue.push((problem.getStartState(), []), 0)
-
-    while queue:
-        vertex, directionsSoFar = queue.pop()
-        if (problem.isGoalState(vertex)):
-            return directionsSoFar
-        else:
-            if vertex not in visited:
-                nextSucc = problem.getSuccessors(vertex)
-                visited.add(vertex)        
-                for coord, direction, cost in nextSucc:
-                    if coord not in visited:
-                        newDir = directionsSoFar + [direction]
-                        queue.push((coord, newDir), problem.getCostOfActions(newDir))
-
+    # UCS is A* with a trivial heuristic
+    return aStarSearch(problem, nullHeuristic)
 
 def nullHeuristic(state, problem=None):
-    """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
-    """
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     queue = util.PriorityQueue()
-    visited = set()
+    visited = []
     queue.push((problem.getStartState(), []), 0)
 
     while queue:
@@ -138,7 +115,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         else:
             if vertex not in visited:
                 nextSucc = problem.getSuccessors(vertex)
-                visited.add(vertex)                   
+                visited.append(vertex)                   
                 for coord, direction, cost in nextSucc:
                     if coord not in visited:
                         newDir = directionsSoFar + [direction]
